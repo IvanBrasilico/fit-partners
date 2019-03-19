@@ -1,2 +1,2 @@
-def configure_db():
+def configure_db(app):
     pass

@@ -1,10 +1,10 @@
 from flask import Flask
 
+from app.main import configure_app
+from app.models import configure_db
 
-app = Flask(__name__)
-
-def configure_app():
-    return app
+app = configure_app()
+configure_db(app)
 
 @app.route('/')
 def hello():

@@ -10,12 +10,12 @@ import unittest
 
 from psycopg2 import connect
 
-from app.views import configure_app
+from app.views import app
 
 # mysession = MySession(Base, test=True)
 # dbsession = mysession.session
 # engine = mysession.engine
-app = configure_app()
+# app = configure_app()
 # Base.metadata.create_all(engine)
 
 
