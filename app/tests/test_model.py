@@ -22,9 +22,9 @@ class ClubTestCase(unittest.TestCase):
         assert self.instructor.name == 'spock'
 
     def test_class(self):
-        aclass = Class('gym')
+        self.aclass = Class('gym')
         assert self.aclass.name == 'gym'
 
     def test_member(self):
-        member = Member('Kirk')
+        self.member = Member('Kirk')
         assert self.member.name == 'Kirk'
