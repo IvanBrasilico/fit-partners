@@ -63,22 +63,27 @@ class ClubTestCase(unittest.TestCase):
     def test_closest_clubs(self):
         clubs = []
         clubs.append(Club('closer.5'))
-        clubs.append(Club('closer1'))
-        clubs.append(Club('closer1.5'))
         clubs.append(Club('closer1.6'))
         clubs.append(Club('farfaraway3'))
-        lats = [1., 1., 1.5, 1.6, 4]
+        clubs.append(Club('closer1'))
+        clubs.append(Club('closer1.5'))
+        lats = [1., 1.6, 3., 1., 2.5]
         longs = [1.5, 2., 2., 2., 1]
         for club, lat, long in zip(clubs, lats, longs):
             club.setLatLong(lat, long)
         athlete = Athlete('lost')
         athlete.setLatLong(1., 1.)
         closest_clubs, distances = athlete.get_closest(clubs, max_radius=2.)
-        print(closest_clubs)
+        print(closest_clubs, distances)
         assert len(closest_clubs) == len(clubs) - 1
+        previous_distance = 0
         for ind in range(len(closest_clubs)):
-            assert closest_clubs[ind] == clubs[ind]
-
+            assert distances[ind] >= previous_distance
+            previous_distance = distances[ind]
+        assert closest_clubs[0] == clubs[0]
+        assert closest_clubs[1] == clubs[3]
+        assert closest_clubs[2] == clubs[4]
+        assert closest_clubs[3] == clubs[1]
 
     def test_closest_athletes(self):
         pass

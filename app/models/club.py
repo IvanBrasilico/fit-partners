@@ -29,14 +29,15 @@ class GeoLoc():
         return abs(other.lat - self.lat) + abs(other.long - self.long)
 
     def get_closest(self, geolocs: list, max_radius: float):
-        distances = []
         closest = []
         for geoloc in geolocs:
             distance = self.manhatan_distance(geoloc)
+            print(geoloc, distance)
             if distance < max_radius:
-                distances.append(distance)
-                closest.append(geoloc)
-        #TODO: Order by distance
+                closest.append((distance, geoloc))
+        closest.sort()
+        distances = [item[0] for item in closest]
+        closest = [item[1] for item in closest]
         return closest, distances
 
 class ClassSchedule:
@@ -78,6 +79,11 @@ class Club(GeoLoc):
     def __init__(self, name: str):
         self.name = name
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
 
 class Instructor(GeoLoc):
     def __init__(self, name: str):
