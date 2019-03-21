@@ -2,8 +2,8 @@
 """
 import unittest
 
-from app.models.club import Class, ClassSchedule, Club, Instructor, \
-    Member, WeekDay
+from app.models.club import Athlete, Class, ClassSchedule, Club, Instructor, \
+    WeekDay
 
 
 class ClubTestCase(unittest.TestCase):
@@ -26,9 +26,9 @@ class ClubTestCase(unittest.TestCase):
         self.aclass = Class('gym')
         assert self.aclass.name == 'gym'
 
-    def test_member(self):
-        self.member = Member('Kirk')
-        assert self.member.name == 'Kirk'
+    def test_athlete(self):
+        self.athlete = Athlete('Kirk')
+        assert self.athlete.name == 'Kirk'
 
     def test_schedule(self):
         self.test_class()
@@ -43,3 +43,57 @@ class ClubTestCase(unittest.TestCase):
         self.test_instructor()
         self.aclass.add_instructor(self.instructor)
         assert self.instructor in self.aclass.get_instructors()
+
+    def test_club_is_close(self):
+        radius = 1
+        self.test_club()
+        self.test_athlete()
+        self.club.setLatLong(1., 1.)
+        assert self.club.lat == 1.
+        assert self.club.long == 1.
+        self.athlete.setLatLong(1.5, 2.)
+        assert self.athlete.is_close(self.club, radius) is True
+        self.athlete.setLatLong(2.5, 2.)
+        assert self.athlete.is_close(self.club, radius) is False
+        self.athlete.setLatLong(1., 1.)
+        assert self.athlete.is_close(self.club, radius) is True
+        self.athlete.setLatLong(1., 3.)
+        assert self.athlete.is_close(self.club, radius) is False
+
+    def test_closest_clubs(self):
+        clubs = []
+        clubs.append(Club('closer.5'))
+        clubs.append(Club('closer1'))
+        clubs.append(Club('closer1.5'))
+        clubs.append(Club('closer1.6'))
+        clubs.append(Club('farfaraway3'))
+        lats = [1., 1., 1.5, 1.6, 4]
+        longs = [1.5, 2., 2., 2., 1]
+        for club, lat, long in zip(clubs, lats, longs):
+            club.setLatLong(lat, long)
+        athlete = Athlete('lost')
+        athlete.setLatLong(1., 1.)
+        closest_clubs, distances = athlete.get_closest(clubs, max_radius=2.)
+        print(closest_clubs)
+        assert len(closest_clubs) == len(clubs) - 1
+        for ind in range(len(closest_clubs)):
+            assert closest_clubs[ind] == clubs[ind]
+
+
+    def test_closest_athletes(self):
+        pass
+
+    def test_instructor_athletes(self):
+        pass
+
+    def test_instructor_classes(self):
+        pass
+
+    def test_instructor_athletes(self):
+        pass
+
+    def test_instructor_calendar(self):
+        pass
+
+    def test_athlete_calendar(self):
+        pass
