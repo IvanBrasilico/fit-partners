@@ -26,7 +26,7 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = get_secret()
-    SQLALCHEMY_DATABASE_URI = os.environ['FIT_DB_URL']
+    SQLALCHEMY_DATABASE_URI = os.environ.get('FIT_DB_URL')
 
 
 class ProductionConfig(Config):

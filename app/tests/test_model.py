@@ -2,8 +2,8 @@
 """
 import unittest
 
-from app.models.club import Athlete, Class, ClassSchedule, Club, Instructor, \
-    WeekDay
+from app.models.club import Athlete, Relation, Class, ClassSchedule, \
+    Club, Instructor, WeekDay
 
 
 class ClubTestCase(unittest.TestCase):
@@ -45,7 +45,7 @@ class ClubTestCase(unittest.TestCase):
         assert self.instructor in self.aclass.get_instructors()
 
     def test_club_is_close(self):
-        radius = 1
+        radius = 1.5
         self.test_club()
         self.test_athlete()
         self.club.setLatLong(1., 1.)
@@ -59,6 +59,22 @@ class ClubTestCase(unittest.TestCase):
         assert self.athlete.is_close(self.club, radius) is True
         self.athlete.setLatLong(1., 3.)
         assert self.athlete.is_close(self.club, radius) is False
+
+    def test_club_is_insquare(self):
+        radius = 1.
+        self.test_club()
+        self.test_athlete()
+        self.club.setLatLong(1., 1.)
+        assert self.club.lat == 1.
+        assert self.club.long == 1.
+        self.athlete.setLatLong(1.5, 2.)
+        assert self.athlete.is_insquare(self.club, radius) is True
+        self.athlete.setLatLong(2.5, 2.)
+        assert self.athlete.is_insquare(self.club, radius) is False
+        self.athlete.setLatLong(1., 1.)
+        assert self.athlete.is_insquare(self.club, radius) is True
+        self.athlete.setLatLong(1., 3.)
+        assert self.athlete.is_insquare(self.club, radius) is False
 
     def test_closest_clubs(self):
         clubs = []
@@ -85,17 +101,26 @@ class ClubTestCase(unittest.TestCase):
         assert closest_clubs[2] == clubs[4]
         assert closest_clubs[3] == clubs[1]
 
-    def test_closest_athletes(self):
-        pass
-
     def test_instructor_athletes(self):
-        pass
-
-    def test_instructor_classes(self):
-        pass
-
-    def test_instructor_athletes(self):
-        pass
+        instructor = Instructor('Ulisses')
+        instructor2 = Instructor('Menelau')
+        athlete1 = Athlete('Aquiles')
+        athlete2 = Athlete('Ajax')
+        Relation.add(instructor, athlete1)
+        Relation.add(instructor, athlete2)
+        Relation.add(instructor2, athlete2)
+        assert Relation.active(instructor, athlete1) is True
+        assert Relation.active(instructor, athlete2) is True
+        athletes = Relation.get(instructor, key=0)
+        assert len(athletes) == 2
+        instructors = Relation.get(athlete1, key=1)
+        assert len(instructors) == 1
+        instructors = Relation.get(athlete2, key=1)
+        assert len(instructors) == 2
+        assert Relation.remove(instructor, athlete1) is True
+        assert Relation.active(instructor, athlete1) is False
+        athletes = Relation.get(instructor, key=0)
+        assert len(athletes) == 1
 
     def test_instructor_calendar(self):
         pass
