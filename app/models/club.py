@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import date, datetime
 
 
 class WeekDay:
@@ -50,45 +51,18 @@ class GeoLoc():
         return closest, distances
 
 
-class ClassSchedule:
-    def __init__(self, aclass, instructor,
-                 weekday: WeekDay, hour: int,
-                 minute: int = 0, duration: int = 30):
-        self.aclass= aclass
-        self.instructor = instructor
-        self.weekday = weekday
-        self.hour = hour
-        self.minute = minute
-        self.duration = duration
-
-
-class Class:
+class Club(GeoLoc):
     def __init__(self, name: str):
         self.name = name
-        self.schedules = defaultdict(list)
-        self.instructors = []
 
-    def add_class_schedule(self, day: WeekDay,
-                           class_schedule: ClassSchedule):
-        self.schedules[day].append(class_schedule)
-
-    def add_schedule(self, day: WeekDay, hour: int,
-                     minute: int = 0, duration: int = 30):
-        self.add_class_schedule(day, ClassSchedule(self, day, hour, minute, duration))
-
-    def get_schedules(self, weekday):
-        return self.schedules[weekday]
+    def add_activity(self, activity):
+        raise NotImplementedError()
 
     def add_instructor(self, instructor):
-        self.instructors.append(instructor)
+        raise NotImplementedError()
 
-    def get_instructors(self):
-        return self.instructors
-
-
-class Person(GeoLoc):
-    def __init__(self, name: str):
-        self.name = name
+    def add_manager(self, person):
+        raise NotImplementedError()
 
     def __str__(self):
         return self.name
@@ -97,7 +71,7 @@ class Person(GeoLoc):
         return self.name
 
 
-class Club(GeoLoc):
+class Person(GeoLoc):
     def __init__(self, name: str):
         self.name = name
 
@@ -116,6 +90,61 @@ class Instructor(Person):
 class Athlete(Person):
     def __init__(self, name: str):
         super().__init__(name)
+
+
+class Activity:
+    def __init__(self, name):
+        self.name = name
+
+
+class SessionSchedule:
+    def __init__(self, session,
+                 weekday: WeekDay, hour: int,
+                 minute: int = 0, duration: int = 30):
+        self.session = session
+        self.weekday = weekday
+        self.hour = hour
+        self.minute = minute
+        self.duration = duration
+
+
+class Presence:
+    def __init__(self, athlete: Athlete,
+                 schedule: SessionSchedule,
+                 when: datetime):
+        self.athlete = athlete
+        self.schedule = SessionSchedule
+        self.when = when
+
+
+class Session:
+    def __init__(self,
+                 activity: Activity,
+                 instructor: Instructor):
+        self.schedules = defaultdict(list)
+        self.presences = []
+        self.activity = activity
+        self.instructor = instructor
+
+    def _add_session_schedule(self, schedule: SessionSchedule):
+        self.schedules[schedule.weekday].append(schedule)
+
+    def add_schedule(self, weekday: WeekDay, hour: int,
+                     minute: int = 0, duration: int = 30):
+        self._add_session_schedule(
+            SessionSchedule(self, weekday, hour, minute, duration)
+        )
+
+    def get_schedules(self, weekday: WeekDay = None):
+        if weekday is not None:
+            return self.schedules[weekday]
+        return [schedule for schedule in self.schedules.values()]
+
+    def get_today_schedule(self, date: date):
+        nweekday = date.dayOfW
+
+    def register_presence(self, athlete, schedule, when):
+        self.presences.append(Presence(athlete, schedule, when))
 
 
 class Relation:

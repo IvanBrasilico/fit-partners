@@ -2,8 +2,8 @@
 """
 import unittest
 
-from app.models.club import Athlete, Relation, Class, ClassSchedule, \
-    Club, Instructor, WeekDay
+from app.models.club import Athlete, Relation, \
+    Club, Instructor, WeekDay, Activity, Session, SessionSchedule
 
 
 class ClubTestCase(unittest.TestCase):
@@ -22,27 +22,28 @@ class ClubTestCase(unittest.TestCase):
         self.instructor = Instructor('spock')
         assert self.instructor.name == 'spock'
 
-    def test_class(self):
-        self.aclass = Class('gym')
-        assert self.aclass.name == 'gym'
+    def test_activity(self):
+        self.activity = Activity('gym')
+        assert self.activity.name == 'gym'
+
+    def test_session(self):
+        self.test_activity()
+        self.test_instructor()
+        self.session = Session(self.activity, self.instructor)
+        assert self.session.instructor == self.instructor
+        assert self.session.activity == self.activity
 
     def test_athlete(self):
         self.athlete = Athlete('Kirk')
         assert self.athlete.name == 'Kirk'
 
     def test_schedule(self):
-        self.test_class()
-        self.aclass.add_schedule(day=WeekDay.Monday, hour=17)
-        schedules: ClassSchedule = self.aclass.get_schedules(WeekDay.Monday)
+        self.test_session()
+        self.session.add_schedule(weekday=WeekDay.Monday, hour=17)
+        schedules: SessionSchedule = self.session.get_schedules(WeekDay.Monday)
         assert schedules[0].hour == 17
         assert schedules[0].minute == 0
         assert schedules[0].duration == 30
-
-    def test_instructor_classes(self):
-        self.test_class()
-        self.test_instructor()
-        self.aclass.add_instructor(self.instructor)
-        assert self.instructor in self.aclass.get_instructors()
 
     def test_club_is_close(self):
         radius = 1.5
@@ -123,7 +124,30 @@ class ClubTestCase(unittest.TestCase):
         assert len(athletes) == 1
 
     def test_instructor_calendar(self):
-        pass
+        instructor = Instructor('schwaznegger')
+        activity = Activity('Jazz')
+        session = Session(activity, instructor)
+        session.add_schedule(WeekDay.Monday, 21, 30)
+        session.add_schedule(WeekDay.Wednesday, 21)
+        session.add_schedule(WeekDay.Friday, 21)
+        schedules = session.get_schedules()
+        assert len(schedules) == 3
 
     def test_athlete_calendar(self):
-        pass
+        assert False
+
+    def test_instructor_sessions(self):
+        assert False
+
+    def test_instructor_activities(self):
+        assert False
+
+    def test_activity_instuctors(self):
+        assert False
+
+    def test_athlete_history(self):
+        assert False
+
+    def test_activities_close(self):
+        # Option to filter activities, show clubs and instructors
+        assert False
