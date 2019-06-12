@@ -20,7 +20,7 @@ setup(
         'Flask-wtf',
         'Flask-Migrate',
         'Flask-SQLAlchemy',
-        'psycopg2',
+        'mysql-connector',
         'sqlalchemy',
     ],
     setup_requires=['pytest-runner'],

@@ -5,12 +5,10 @@ Made from Flask testing docs
 http://flask.pocoo.org/docs/1.0/testing/
 
 """
-import os
 import unittest
 
-from psycopg2 import connect
-
 from app.views import app
+
 
 # mysession = MySession(Base, test=True)
 # dbsession = mysession.session
