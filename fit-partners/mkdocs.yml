@@ -1,0 +1,9 @@
+site_name: Fit Partners
+site_description: Rede social para conectar prestadores e clientes (atletas e instrutores, praticantes, clubes)
+nav:
+    - Home: index.md
+    - Perfis:
+      - "Clubes": clubes.md
+      - "Atletas": atletas.md
+
+theme: readthedocs
